@@ -1,22 +1,22 @@
 package work.smaragdine.warapp.fragments;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import androidx.fragment.app.Fragment;
 
 import work.smaragdine.warapp.R;
+import work.smaragdine.warapp.data.Horse;
 
 public class SelectItemsFragment extends Fragment {
 
     private static String TAG = "work.smaragdine.warapp.SelecItemsFragment";
+    ArrayAdapter<String> itemsAdapter;
 
     @Override
     public void onAttach(Context context) {
@@ -31,6 +31,7 @@ public class SelectItemsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         // Initialize the Fragment.
         Log.d(TAG, "onCreate");
+        itemsAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, Horse.horseList);
     }
 
     @Override
@@ -42,6 +43,8 @@ public class SelectItemsFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView");
+        ListView listView = (ListView) view.findViewById(R.id.itemsList);
+        listView.setAdapter(itemsAdapter);
     }
 
     // Called once the parent Activity and the Fragment's UI have

@@ -20,7 +20,6 @@ import work.smaragdine.warapp.R;
 public class ButtonsFragment extends Fragment {
 
     private static String TAG = "work.smaragdine.warapp.ButtonsFragment";
-    private static final int PICK_CONTACT_SUBACTIVITY = 2;
     private OnButtonClickListner listener;
 
     @Override
@@ -57,7 +56,7 @@ public class ButtonsFragment extends Fragment {
         selectHorseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onSelectHorseButtonClick();
+                listener.onHorseButtonClick();
             }
         });
 
@@ -73,9 +72,7 @@ public class ButtonsFragment extends Fragment {
         selectTeamButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Uri uri = Uri.parse("content://contacts/people");
-                Intent intent = new Intent(Intent.ACTION_PICK, uri);
-                startActivityForResult(intent, PICK_CONTACT_SUBACTIVITY);
+                listener.onTeamButtonClick();
             }
         });
 
@@ -174,7 +171,8 @@ public class ButtonsFragment extends Fragment {
     }
 
     public interface OnButtonClickListner {
-        void onSelectHorseButtonClick();
+        void onHorseButtonClick();
+        void onTeamButtonClick();
     }
 
 }
