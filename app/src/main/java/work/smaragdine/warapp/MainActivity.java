@@ -14,7 +14,7 @@ import android.widget.Toast;
 import work.smaragdine.warapp.fragments.ButtonsFragment;
 import work.smaragdine.warapp.fragments.SelectItemsFragment;
 
-public class MainActivity extends AppCompatActivity implements ButtonsFragment.OnButtonClickListner {
+public class MainActivity extends AppCompatActivity implements ButtonsFragment.OnButtonClickListner, SelectItemsFragment.OnItemSelectedListener {
 
     private static String TAG = "work.smaragdine.warapp.MainActivity";
     private static final int REQUEST_SELECT_CONTACT = 1;
@@ -82,6 +82,19 @@ public class MainActivity extends AppCompatActivity implements ButtonsFragment.O
         if (intent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(intent, REQUEST_SELECT_CONTACT);
         }
+    }
+
+    @Override
+    public void onItemSelectedListner(int position) {
+        /*Toast.makeText(this, "Called By Fragment A: position - "+ position, Toast.LENGTH_SHORT).show();*/
+        Bundle args = new Bundle();
+        args.putInt("position", position);
+        ButtonsFragment buttonsFragment = new ButtonsFragment();
+        buttonsFragment.setArguments(args);
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.frameLayout, buttonsFragment);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
     }
 
     /*Get called when selected a contact from contacts app*/

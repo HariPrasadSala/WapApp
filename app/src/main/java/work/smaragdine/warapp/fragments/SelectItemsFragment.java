@@ -6,23 +6,38 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
+
 import androidx.fragment.app.Fragment;
 
+import java.util.ArrayList;
+
 import work.smaragdine.warapp.R;
+import work.smaragdine.warapp.adapters.MyAdapter;
 import work.smaragdine.warapp.data.Horse;
+import work.smaragdine.warapp.models.Item;
 
 public class SelectItemsFragment extends Fragment {
 
     private static String TAG = "work.smaragdine.warapp.SelecItemsFragment";
-    ArrayAdapter<String> itemsAdapter;
+    int layoutID = R.layout.list_item;
+    private OnItemSelectedListener listener;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         // Get a reference to the parent Activity.
         Log.d(TAG, "onAttach");
+        //--OnItemSelectedListener listener;
+        // This event fires 1st, before creation of fragment or any views
+        // The onAttach method is called when the Fragment instance is associated with an Activity.
+        // This does not mean the Activity is fully initialized.
+        if (context instanceof OnItemSelectedListener) {
+            this.listener = (OnItemSelectedListener) context;
+        }
     }
 
     // Called to do the initial creation of the Fragment.
@@ -31,7 +46,6 @@ public class SelectItemsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         // Initialize the Fragment.
         Log.d(TAG, "onCreate");
-        itemsAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, Horse.horseList);
     }
 
     @Override
@@ -43,8 +57,16 @@ public class SelectItemsFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView");
-        ListView listView = (ListView) view.findViewById(R.id.itemsList);
-        listView.setAdapter(itemsAdapter);
+        ListView listView = view.findViewById(R.id.itemsList);
+        MyAdapter myAdapter = new MyAdapter(getContext(), layoutID, new Horse().getHorseList());
+        listView.setAdapter(myAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // go to activity to load pizza details fragment
+                listener.onItemSelectedListner(position); // (3) Communicate with Activity using Listener
+            }
+        });;
     }
 
     // Called once the parent Activity and the Fragment's UI have
@@ -129,6 +151,12 @@ public class SelectItemsFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         Log.d(TAG, "onDetach");
+    }
+
+    // Define the events that the fragment will use to communicate
+    public interface OnItemSelectedListener {
+        // This can be any number of events to be sent to the activity
+        void onItemSelectedListner(int position);
     }
 
 }

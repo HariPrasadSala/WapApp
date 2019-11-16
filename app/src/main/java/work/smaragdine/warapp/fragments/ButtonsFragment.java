@@ -10,17 +10,26 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import java.util.ArrayList;
+
 import work.smaragdine.warapp.R;
+import work.smaragdine.warapp.adapters.MyAdapter1;
+import work.smaragdine.warapp.data.Horse;
+import work.smaragdine.warapp.models.Item;
 
 public class ButtonsFragment extends Fragment {
 
     private static String TAG = "work.smaragdine.warapp.ButtonsFragment";
     private OnButtonClickListner listener;
+    private int position = 0;
+    int layoutID = R.layout.list_item;
+    ListView listView;
 
     @Override
     public void onAttach(Context context) {
@@ -38,6 +47,12 @@ public class ButtonsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         // Initialize the Fragment.
         Log.d(TAG, "onCreate");
+        if(savedInstanceState == null){
+            // Get back arguments
+            if(getArguments() != null) {
+                position = getArguments().getInt("position", 0);
+            }
+        }
     }
 
     // Called once the Fragment has been created in order for it to
@@ -84,6 +99,8 @@ public class ButtonsFragment extends Fragment {
             }
         });
 
+        listView = view.findViewById(R.id.listSelectedItems);
+
     }
 
     // Called once the parent Activity and the Fragment's UI have
@@ -95,6 +112,12 @@ public class ButtonsFragment extends Fragment {
         // that requires the parent Activity to be initialized or the
         // Fragment's view to be fully inflated.
         Log.d(TAG, "onActivityCreated");
+        Horse horseList = new Horse();
+        ArrayList<Item> arrayList = new ArrayList<>();
+        arrayList.add(new Item(horseList.getHorseList().get(position).getName(),horseList.getHorseList().get(position).getImageName()));
+        MyAdapter1 myAdapter = new MyAdapter1(getContext(), layoutID, arrayList);
+        listView.setAdapter(myAdapter);
+        Toast.makeText(getContext(), "Postition:"+position, Toast.LENGTH_SHORT).show();
     }
 
     // Called at the start of the visible lifetime.
