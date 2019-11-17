@@ -14,6 +14,7 @@ import android.widget.Toast;
 import work.smaragdine.warapp.data.Horse;
 import work.smaragdine.warapp.fragments.ButtonsFragment;
 import work.smaragdine.warapp.fragments.SelectItemsFragment;
+import work.smaragdine.warapp.fragments.TableViewFragment;
 
 public class MainActivity extends AppCompatActivity implements ButtonsFragment.OnButtonClickListner, SelectItemsFragment.OnItemSelectedListener {
 
@@ -22,6 +23,7 @@ public class MainActivity extends AppCompatActivity implements ButtonsFragment.O
     private static final int HORSE = 1;
     private static final int GUN = 2;
     private static final int AMMUNITION =3;
+    private static final int TEAM =4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,19 +83,27 @@ public class MainActivity extends AppCompatActivity implements ButtonsFragment.O
         selectItemsFragment.setArguments(args);
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.frameLayout, selectItemsFragment);
-        fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
 
     /*Get called when select team button clicked in buttons fragment*/
     @Override
     public void onTeamButtonClick() {
-        Toast.makeText(this, "onSelectHorseButtonClick",Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "onTeamButtonClick",Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType(ContactsContract.Contacts.CONTENT_TYPE);
         if (intent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(intent, REQUEST_SELECT_CONTACT);
         }
+    }
+
+    @Override
+    public void onViewTableButtonClick() {
+        Toast.makeText(this, "onViewTableButtonClick",Toast.LENGTH_SHORT).show();
+        TableViewFragment tableViewFragment = new TableViewFragment();
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.frameLayout, tableViewFragment);
+        fragmentTransaction.commit();
     }
 
 
@@ -108,7 +118,6 @@ public class MainActivity extends AppCompatActivity implements ButtonsFragment.O
         buttonsFragment.setArguments(args);
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.frameLayout, buttonsFragment);
-        fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
 
@@ -126,6 +135,14 @@ public class MainActivity extends AppCompatActivity implements ButtonsFragment.O
                 int nameIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
                 String name = cursor.getString(nameIndex);
                 Toast.makeText(this, "Result Ok Name:"+name, Toast.LENGTH_SHORT).show();
+                Bundle args = new Bundle();
+                args.putInt("code", TEAM);
+                args.putString("contact_name", name);
+                ButtonsFragment buttonsFragment = new ButtonsFragment();
+                buttonsFragment.setArguments(args);
+                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.frameLayout, buttonsFragment);
+                fragmentTransaction.commit();
             }
         } else
             Toast.makeText(this, "Problem while fetching contact.", Toast.LENGTH_SHORT).show();

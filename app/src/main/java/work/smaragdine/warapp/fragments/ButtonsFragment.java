@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import work.smaragdine.warapp.R;
 import work.smaragdine.warapp.adapters.MyAdapter1;
 import work.smaragdine.warapp.data.Ammunition;
+import work.smaragdine.warapp.data.ArrayListHolder;
 import work.smaragdine.warapp.data.Gun;
 import work.smaragdine.warapp.data.Horse;
 import work.smaragdine.warapp.models.Item;
@@ -29,6 +30,7 @@ public class ButtonsFragment extends Fragment {
     private ListView listView;
     private OnButtonClickListner listener;
     private ArrayList<Item> selectedItemsList;
+    private String contact_name;
     private int position = 0;
     private int code = 0;
     private int layoutID = R.layout.list_item;
@@ -36,6 +38,7 @@ public class ButtonsFragment extends Fragment {
     private static final int HORSE = 1;
     private static final int GUN = 2;
     private static final int AMMUNITION = 3;
+    private static final int TEAM = 4;
 
     /*Get called as and when Activity commits Fragment Transaction to this specific ButtonFragment*/
     @Override
@@ -61,7 +64,10 @@ public class ButtonsFragment extends Fragment {
             if(getArguments() != null) {
                 position = getArguments().getInt("position", 0);
                 code = getArguments().getInt("code", 0);
+                contact_name = getArguments().getString("contact_name", "");
             }
+        } else {
+            return;
         }
     }
 
@@ -110,6 +116,14 @@ public class ButtonsFragment extends Fragment {
             }
         });
 
+        Button viewTableButton = (Button) view.findViewById(R.id.viewTable);
+        viewTableButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onViewTableButtonClick();
+            }
+        });
+
         listView = view.findViewById(R.id.listSelectedItems);
 
     }
@@ -123,20 +137,23 @@ public class ButtonsFragment extends Fragment {
         // that requires the parent Activity to be initialized or the
         // Fragment's view to be fully inflated.
         Log.d(TAG, "onActivityCreated");
-        selectedItemsList = new ArrayList<>();
+        selectedItemsList = ArrayListHolder.getInstance().selectedItemsList;
         if (code == HORSE) {
             Horse horseList = new Horse();
-            selectedItemsList.add(new Item(horseList.getHorseList().get(position).getName(),horseList.getHorseList().get(position).getImageName()));
+            ArrayListHolder.getInstance().selectedItemsList.add(new Item(horseList.getHorseList().get(position).getName(),horseList.getHorseList().get(position).getImageName()));
         } else if (code == GUN) {
             Gun gunList = new Gun();
             selectedItemsList.add(new Item(gunList.getGunList().get(position).getName(),gunList.getGunList().get(position).getImageName()));
         } else if (code == AMMUNITION) {
             Ammunition ammunitionList = new Ammunition();
             selectedItemsList.add(new Item(ammunitionList.getAmmunitionList().get(position).getName(),ammunitionList.getAmmunitionList().get(position).getImageName()));
+        } else if (code == TEAM) {
+            selectedItemsList.add(new Item(contact_name, R.drawable.team));
         }
         MyAdapter1 myAdapter = new MyAdapter1(getContext(), layoutID, selectedItemsList);
         listView.setAdapter(myAdapter);
         Toast.makeText(getContext(), "Postition: "+position+" Code: "+code, Toast.LENGTH_SHORT).show();
+        setArguments(null);
     }
 
     // Called at the start of the visible lifetime.
@@ -215,6 +232,7 @@ public class ButtonsFragment extends Fragment {
     public interface OnButtonClickListner {
         void onTeamButtonClick();
         void onButtonClick(int code);
+        void onViewTableButtonClick();
     }
 
 }

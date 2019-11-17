@@ -30,6 +30,12 @@
         android:text="Add Ammunition"
         android:id="@+id/addAmmunition"/>
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="View Table"
+        android:id="@+id/viewTable"/>
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
