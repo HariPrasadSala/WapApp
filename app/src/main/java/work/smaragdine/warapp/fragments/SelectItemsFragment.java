@@ -7,9 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
@@ -17,6 +15,8 @@ import java.util.ArrayList;
 
 import work.smaragdine.warapp.R;
 import work.smaragdine.warapp.adapters.MyAdapter;
+import work.smaragdine.warapp.data.Ammunition;
+import work.smaragdine.warapp.data.Gun;
 import work.smaragdine.warapp.data.Horse;
 import work.smaragdine.warapp.models.Item;
 
@@ -25,6 +25,10 @@ public class SelectItemsFragment extends Fragment {
     private static String TAG = "work.smaragdine.warapp.SelecItemsFragment";
     int layoutID = R.layout.list_item;
     private OnItemSelectedListener listener;
+    private static final int HORSE = 1;
+    private static final int GUN = 2;
+    private static final int AMMUNITION =3;
+    private int code;
 
     @Override
     public void onAttach(Context context) {
@@ -46,6 +50,12 @@ public class SelectItemsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         // Initialize the Fragment.
         Log.d(TAG, "onCreate");
+        if(savedInstanceState == null){
+            // Get back arguments
+            if(getArguments() != null) {
+                code = getArguments().getInt("code", 0);
+            }
+        }
     }
 
     @Override
@@ -58,15 +68,24 @@ public class SelectItemsFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView");
         ListView listView = view.findViewById(R.id.itemsList);
-        MyAdapter myAdapter = new MyAdapter(getContext(), layoutID, new Horse().getHorseList());
+        MyAdapter myAdapter;
+        if (code == HORSE) {
+            myAdapter = new MyAdapter(getContext(), layoutID, new Horse().getHorseList());
+        } else if (code == GUN) {
+            myAdapter = new MyAdapter(getContext(), layoutID, new Gun().getGunList());
+        } else if (code == AMMUNITION) {
+            myAdapter = new MyAdapter(getContext(), layoutID, new Ammunition().getAmmunitionList());
+        } else {
+            myAdapter = new MyAdapter(getContext(), layoutID, new ArrayList<Item>());
+        }
         listView.setAdapter(myAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // go to activity to load pizza details fragment
-                listener.onItemSelectedListner(position); // (3) Communicate with Activity using Listener
+                listener.onItemSelectedListner(position, code); // (3) Communicate with Activity using Listener
             }
-        });;
+        });
     }
 
     // Called once the parent Activity and the Fragment's UI have
@@ -156,7 +175,7 @@ public class SelectItemsFragment extends Fragment {
     // Define the events that the fragment will use to communicate
     public interface OnItemSelectedListener {
         // This can be any number of events to be sent to the activity
-        void onItemSelectedListner(int position);
+        void onItemSelectedListner(int position, int code);
     }
 
 }

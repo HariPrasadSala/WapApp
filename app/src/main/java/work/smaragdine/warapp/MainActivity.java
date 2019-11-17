@@ -11,6 +11,7 @@ import android.provider.ContactsContract;
 import android.util.Log;
 import android.widget.Toast;
 
+import work.smaragdine.warapp.data.Horse;
 import work.smaragdine.warapp.fragments.ButtonsFragment;
 import work.smaragdine.warapp.fragments.SelectItemsFragment;
 
@@ -18,6 +19,9 @@ public class MainActivity extends AppCompatActivity implements ButtonsFragment.O
 
     private static String TAG = "work.smaragdine.warapp.MainActivity";
     private static final int REQUEST_SELECT_CONTACT = 1;
+    private static final int HORSE = 1;
+    private static final int GUN = 2;
+    private static final int AMMUNITION =3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,11 +66,19 @@ public class MainActivity extends AppCompatActivity implements ButtonsFragment.O
         super.onDestroy();
     }
 
-    /*Get called when select horse button clicked in buttons fragment*/
+    /*Get called when select buttons clicked in buttons fragment*/
     @Override
-    public void onHorseButtonClick() {
-        Toast.makeText(this, "onSelectHorseButtonClick",Toast.LENGTH_SHORT).show();
+    public void onButtonClick(int code) {
+        Bundle args = new Bundle();
+        if (code == HORSE) {
+            args.putInt("code", HORSE);
+        } else if (code == GUN) {
+            args.putInt("code", GUN);
+        } else if (code == AMMUNITION) {
+            args.putInt("code", AMMUNITION);
+        }
         SelectItemsFragment selectItemsFragment = new SelectItemsFragment();
+        selectItemsFragment.setArguments(args);
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.frameLayout, selectItemsFragment);
         fragmentTransaction.addToBackStack(null);
@@ -84,11 +96,14 @@ public class MainActivity extends AppCompatActivity implements ButtonsFragment.O
         }
     }
 
+
+    /*Gets called when user selects any items from the list of Horses, Guns, Ammunition*/
     @Override
-    public void onItemSelectedListner(int position) {
+    public void onItemSelectedListner(int position, int code) {
         /*Toast.makeText(this, "Called By Fragment A: position - "+ position, Toast.LENGTH_SHORT).show();*/
         Bundle args = new Bundle();
         args.putInt("position", position);
+        args.putInt("code", code);
         ButtonsFragment buttonsFragment = new ButtonsFragment();
         buttonsFragment.setArguments(args);
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
