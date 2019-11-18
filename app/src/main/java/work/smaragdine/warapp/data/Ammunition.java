@@ -9,9 +9,9 @@ public class Ammunition {
 
     public ArrayList<Item> getAmmunitionList() {
         ArrayList<Item> ammunitionList = new ArrayList<>();
-        ammunitionList.add(new Item("Bullets", R.drawable.sergeant_reckless));
-        ammunitionList.add(new Item("Armor",R.drawable.comanche));
-        ammunitionList.add(new Item("Night Vision",R.drawable.cincinnati));
+        ammunitionList.add(new Item("Bullets", R.drawable.bullets));
+        ammunitionList.add(new Item("Armor",R.drawable.armor));
+        ammunitionList.add(new Item("Night Vision",R.drawable.night_vision));
         return ammunitionList;
     }
 
