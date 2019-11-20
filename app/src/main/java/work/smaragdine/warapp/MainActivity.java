@@ -83,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements ButtonsFragment.O
         selectItemsFragment.setArguments(args);
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.frameLayout, selectItemsFragment);
+        fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
 
@@ -103,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements ButtonsFragment.O
         TableViewFragment tableViewFragment = new TableViewFragment();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.frameLayout, tableViewFragment);
+        fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
 
