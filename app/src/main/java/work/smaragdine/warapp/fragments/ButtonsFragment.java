@@ -1,6 +1,7 @@
 package work.smaragdine.warapp.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,10 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.util.ArrayList;
 
@@ -22,6 +23,7 @@ import work.smaragdine.warapp.data.ArrayListHolder;
 import work.smaragdine.warapp.data.Gun;
 import work.smaragdine.warapp.data.Horse;
 import work.smaragdine.warapp.models.Item;
+import work.smaragdine.warapp.receivers.WarUpdatesListener;
 
 public class ButtonsFragment extends Fragment {
 
@@ -41,6 +43,7 @@ public class ButtonsFragment extends Fragment {
     private static final int TEAM = 4;
 
     /*Get called as and when Activity commits Fragment Transaction to this specific ButtonFragment*/
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -140,20 +143,22 @@ public class ButtonsFragment extends Fragment {
         selectedItemsList = ArrayListHolder.getInstance().selectedItemsList;
         if (code == HORSE) {
             Horse horseList = new Horse();
-            ArrayListHolder.getInstance().selectedItemsList.add(new Item(horseList.getHorseList().get(position).getName(),horseList.getHorseList().get(position).getImageName()));
+            ArrayListHolder.getInstance().selectedItemsList.add(new Item(horseList.getHorseList().get(position).getName(),horseList.getHorseList().get(position).getImageName(), code));
         } else if (code == GUN) {
             Gun gunList = new Gun();
-            selectedItemsList.add(new Item(gunList.getGunList().get(position).getName(),gunList.getGunList().get(position).getImageName()));
+            selectedItemsList.add(new Item(gunList.getGunList().get(position).getName(),gunList.getGunList().get(position).getImageName(), code));
         } else if (code == AMMUNITION) {
             Ammunition ammunitionList = new Ammunition();
-            selectedItemsList.add(new Item(ammunitionList.getAmmunitionList().get(position).getName(),ammunitionList.getAmmunitionList().get(position).getImageName()));
+            selectedItemsList.add(new Item(ammunitionList.getAmmunitionList().get(position).getName(),ammunitionList.getAmmunitionList().get(position).getImageName(), code));
         } else if (code == TEAM) {
-            selectedItemsList.add(new Item(contact_name, R.drawable.team));
+            selectedItemsList.add(new Item(contact_name, R.drawable.team, code));
         }
         MyAdapter1 myAdapter = new MyAdapter1(getContext(), layoutID, selectedItemsList);
         listView.setAdapter(myAdapter);
-        Toast.makeText(getContext(), "Postition: "+position+" Code: "+code, Toast.LENGTH_SHORT).show();
-        setArguments(null);
+
+        if (isReadyForWar(selectedItemsList)){
+            warStatusUpdate("Required Items For War Are Selected.");
+        }
     }
 
     // Called at the start of the visible lifetime.
@@ -233,6 +238,37 @@ public class ButtonsFragment extends Fragment {
         void onTeamButtonClick();
         void onButtonClick(int code);
         void onViewTableButtonClick();
+    }
+
+    /*Method which checks weather all the things which are required for the war are selected or not.*/
+    private Boolean isReadyForWar(ArrayList<Item> selectedItemsList) {
+        Boolean areHorsesSelected = false, areGunsSelected = false, isTeamSelected = false, areAmmunitionSelected = false;
+
+        for (Item item : selectedItemsList) {
+            if (item.getCode() == HORSE) {
+                areHorsesSelected = true;
+            } else if (item.getCode() == GUN) {
+                areGunsSelected = true;
+            } else if (item.getCode() == TEAM) {
+                isTeamSelected = true;
+            } else if (item.getCode() == AMMUNITION) {
+                areAmmunitionSelected = true;
+            }
+        }
+
+        if (areHorsesSelected && areGunsSelected && isTeamSelected && areAmmunitionSelected) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private void warStatusUpdate(String status) {
+        /*Sending broadcast to with Action com.smaragdine.work.WAR_STATUS*/
+        Intent intent = new Intent();
+        intent.setAction("com.smaragdine.work.WAR_STATUS");
+        intent.putExtra(WarUpdatesListener.STATUS, status);
+        LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
     }
 
 }

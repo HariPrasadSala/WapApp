@@ -8,9 +8,12 @@ public class Item {
 
     private int image_name;
 
-    public  Item(String name, int image_name) {
+    private int code;
+
+    public  Item(String name, int image_name, int code) {
         this.name = name;
         this.image_name = image_name;
+        this.code = code;
     }
 
     public String getName() {
@@ -21,4 +24,11 @@ public class Item {
         return image_name;
     }
 
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
+    }
 }

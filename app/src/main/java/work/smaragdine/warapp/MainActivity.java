@@ -2,8 +2,10 @@ package work.smaragdine.warapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,13 +13,15 @@ import android.provider.ContactsContract;
 import android.util.Log;
 import android.widget.Toast;
 
-import work.smaragdine.warapp.data.Horse;
 import work.smaragdine.warapp.fragments.ButtonsFragment;
 import work.smaragdine.warapp.fragments.SelectItemsFragment;
 import work.smaragdine.warapp.fragments.TableViewFragment;
+import work.smaragdine.warapp.receivers.WarUpdatesListener;
 
 public class MainActivity extends AppCompatActivity implements ButtonsFragment.OnButtonClickListner, SelectItemsFragment.OnItemSelectedListener {
 
+    private WarUpdatesListener receiver = new WarUpdatesListener();
+    private IntentFilter intentFilter = new IntentFilter(WarUpdatesListener.WAR_STATUS);
     private static String TAG = "work.smaragdine.warapp.MainActivity";
     private static final int REQUEST_SELECT_CONTACT = 1;
     private static final int HORSE = 1;
@@ -48,18 +52,24 @@ public class MainActivity extends AppCompatActivity implements ButtonsFragment.O
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume");
-    }
 
-    @Override
-    protected void onStop() {
-        Log.d(TAG, "onStop");
-        super.onStop();
+        /*Registering receiver*/
+        LocalBroadcastManager.getInstance(MainActivity.this).registerReceiver(receiver, intentFilter);
     }
 
     @Override
     protected void onPause() {
         Log.d(TAG, "onPause");
         super.onPause();
+
+        /*Unregistering the receiver */
+        LocalBroadcastManager.getInstance(MainActivity.this).unregisterReceiver(receiver);
+    }
+
+    @Override
+    protected void onStop() {
+        Log.d(TAG, "onStop");
+        super.onStop();
     }
 
     @Override
